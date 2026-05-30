@@ -1,0 +1,38 @@
+class Solution:
+    def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
+        # pattern: dfs recursion
+        # matrix~
+        ROWS, COLS = len(matrix), len(matrix[0])
+        dp = {}  # [(r, c)]: LIP
+        directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+
+        def dfs(r, c, prev):
+            # base case
+            if (
+                r < 0
+                or r >= ROWS
+                or c < 0
+                or c >= COLS
+                or matrix[r][c] <= prev  # must be in increasing
+            ):
+                return 0
+
+            # memo check
+            if (r, c) in dp:
+                return dp[(r, c)]
+
+            # recursion
+            res = 1
+            for dr, dc in directions:
+                # only grab the largest one
+                # current also count, so + 1
+                res = max(res, 1 + dfs(r + dr, c + dc, matrix[r][c]))
+            dp[(r, c)] = res
+            return res
+
+        # go through every single grid
+        for r in range(ROWS):
+            for c in range(COLS):
+                dfs(r, c, -1)  # -1 can never be < 0
+
+        return max(dp.values())
